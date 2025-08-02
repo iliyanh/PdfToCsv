@@ -1,23 +1,17 @@
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    console.log('Selected file:', file);
+    // TODO: Send to backend
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <h1>Bank Statement to Excel Converter</h1>
+      <input type="file" accept="application/pdf" onChange={handleFileChange} />
+      <button disabled>Convert</button> {/* You can wire this up later */}
     </div>
   );
 }
