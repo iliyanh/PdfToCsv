@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
+import multer from 'multer';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const upload = multer({ dest: 'uploads/' });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -12,9 +14,13 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.post('/upload', (req, res) => {
-  const file = req.body.file; // Assuming file is sent in the request body
-  console.log('Received file:', file);
+app.post('/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  console.log('Received file:', req.file);
+  res.json({ message: 'File uploaded successfully', filename: req.file.originalname });
 });
 
 app.listen(PORT, () => {
