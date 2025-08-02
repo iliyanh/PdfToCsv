@@ -17,7 +17,7 @@ function App() {
     setFile(selectedFile);
   };
 
-  const handleConvert = async() => {
+  const handleConvert = async () => {
     if (!file) {
       return;
     }
@@ -26,7 +26,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      const res = fetch('http://localhost:3000/upload', {
+      const res = await fetch('http://localhost:3000/upload', {
         method: 'POST',
         body: formData,
       });
