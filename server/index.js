@@ -16,14 +16,6 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 app.post('/upload', upload.single('file'), handleFileUpload);
-// app.post('/upload', upload.single('file'), (req, res) => {
-//   if (!req.file) {
-//     return res.status(400).json({ error: 'No file uploaded' });
-//   }
-
-//   console.log('Received file:', req.file);
-//   res.json({ message: 'File uploaded successfully', filename: req.file.originalname });
-// });
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
