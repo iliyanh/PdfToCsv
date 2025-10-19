@@ -1,19 +1,22 @@
-import { pdfToImages, sendImagesToOpenAI } from "../services/ocrService.js";
+import { pdfToS3Urls, sendImageUrlsToOpenAI } from "../services/ocrService.js";
 import { OCR_PROMPT } from "../prompts/prompts.js";
 const prompt = OCR_PROMPT;
 
 export async function handleFileUpload(req, res) {
-    try {
-        if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-        // Save buffer to a temp file (pdf-to-img needs a path)
+  try {
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-        const pages = await pdfToImages(req.file.buffer);
+    // 1) Convert & upload directly to S3 (no local image writes)
+    const { jobId, urls } = await pdfToS3Urls(req.file.buffer, { userId: "dev" });
+    console.log("[S3] uploaded", urls.length, "images. First:", urls[0]);
 
-        const analysis = await sendImagesToOpenAI(pages, prompt); 
-        return res.json({ pages, analysis });
-    }
-    catch (err) {
-        console.error(err);
-        return res.status(500).json({ error: String(err) });
-    }
+    // 2) Send URLs to Vision
+    const analysis = await sendImageUrlsToOpenAI(urls, OCR_PROMPT);
+
+    // 3) Return URLs + analysis
+    return res.json({ jobId, urls, analysis });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: String(err) });
+  }
 }
